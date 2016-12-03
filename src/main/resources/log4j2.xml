@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" name="neuron">
+
+    <Properties>
+        <Property name="baseDir">../logs/Module</Property>
+        <Property name="PATTERN_FORMAT">%d{dd MMM yyyy HH:mm:ss,SSS}: %p [%t] %c{1.} %M %m%n</Property>
+    </Properties>
+
+    <Appenders>
+        <RollingRandomAccessFile name="RollingRandomAccessFile" immediateFlush="false" fileName="${baseDir}/app.log"
+                                 filePattern="${baseDir}/$${date:yyyy-MM}/archiveLog-%d{dd-MM-yyyy}-%i.log.zip">
+            <PatternLayout charset="UTF-8">
+                <Pattern>%d{dd MMM yyyy HH:mm:ss,SSS}: %p [%t] %c{1.} %M %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10" fileIndex="min" compressionLevel="5">
+                <Delete basePath="${baseDir}" maxDepth="2">
+                    <IfFileName glob="*/archiveLog-*.log.zip"/>
+                    <IfLastModified age="60d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{${PATTERN_FORMAT}}"/>
+        </Console>
+
+        <File name="Application" fileName="${baseDir}/infoMachine.log">
+            <PatternLayout charset="UTF-8" header="Версия Java - ${java:version}\n
+            Runtime - ${java:runtime}\n
+            Виртуальная машина - ${java:vm}\n
+            Операционная система - ${java:os}\n
+            Установленная локаль - ${java:locale}\n
+            Аппаратная поддержка - ${java:hw}">
+                <Pattern>%d %m%n</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Root level="debug" includeLocation="false">
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="RollingRandomAccessFile"/>
+        </Root>
+    </Loggers>
+
+</Configuration>
+
